@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業上傳系統</title>
+
+    <style>
+        .pageTitleArea {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+        }
+
+        .pageTitleText {
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .uploadArea {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .uploadForm {
+            width: 500px;
+            border-radius: 5px;
+            background-color: bisque;
+        }
+
+        .uploadItem {
+            width: 300px;
+            margin: 40px;
+        }
+    </style>
+</head>
+
+<body bgcolor="#A5A2A2">
+
+    <div class="pageTitleArea">
+        <span class="pageTitleText">程式設計(一) 作業上傳</span>
+    </div>
+
+    <div class="uploadArea">
+
+        <form class="uploadForm" id="myForm">
+
+            <div class="uploadItem">姓名：<input type="text" name="myName" placeholder="請輸入你的姓名"></div>
+            <div class="uploadItem">學號：<input type="text" name="myId" placeholder="請輸入你的學號"></div>
+
+            <div id="uploadList">
+                <div class="uploadItem">
+                    <input type="file" name="myFile1">
+                </div>
+                <div class="uploadItem">
+                    <input type="file" name="myFile2" >
+                </div>
+                <div class="uploadItem">
+                    <input type="file" name="myFile3">
+                </div>
+                <div class="uploadItem">
+                    <input type="file" name="myFile4">
+                </div>
+                <div class="uploadItem">
+                    <input type="file" name="myFile5">
+                </div>
+            </div>
+
+            <div class="uploadItem">
+                <input type="submit" value="上傳檔案" onclick="this.value='檔案上傳中...';
+                            google.script.run.withSuccessHandler(fileUploaded)
+                            .uploadFiles(this.parentNode);
+                            return false;">
+            </div>
+            
+
+        </form>
+        <button onclick="test()">123</button>
+    </div>
+
+    <div id="output"></div>
+
+
+    <script>
+        const test = function (){
+            var d1 = document.getElementById('one');
+            d1.appendChild('<h1>123</h1>');
+
+        }
+    </script>
+
+</body>
+
+</html>
