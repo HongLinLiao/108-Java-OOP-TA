@@ -12,7 +12,7 @@ function getItemList(){
     var dateUrl = "https://docs.google.com/spreadsheets/d/1YbvSgFX2Nei88p3_r4FBmTW-yBcYlql4CCaiYD75s_E/edit#gid=0";
     var dateSheet = SpreadsheetApp.openByUrl(dateUrl);
     var dateTable = dateSheet.getSheetByName("工作表1");
-    var dateGroup = dateTable.getRange(1, 1, 18, 4).getValues().filter(function(x){
+    var dateGroup = dateTable.getRange(1, 1, 50, 4).getValues().filter(function(x){
       return x[3] == "v";
     });
     
@@ -59,6 +59,45 @@ function writeLog(time,id,description,status){
     logTable.getRange(LastRow+1, index+1).setValue(item);
   });
 
+}
+
+/* 統整檔 */
+function writeComplete(id,task,message){
+  
+  // 驗證碼檔案
+  var url = 'https://docs.google.com/spreadsheets/d/1F-Sz0HmNsLkSI3daJzIPqzehGmCRshzf9tjDJe6hUGo/edit#gid=0'
+  var sheet = SpreadsheetApp.openByUrl(url);
+  var dataTable = sheet.getSheetByName("工作表1");
+  
+  var dataGroup = dataTable.getRange(1, 1, 28, 50).getValues();
+  
+  // 判斷是否有該作業項目標籤
+  var checkResult = false;
+  var checkColumeIndex = 49; //指表格Colume，並非陣列index
+  dataGroup[0].forEach(function(item,index){
+    if(item == task){
+      checkResult = true;
+      checkColumeIndex = index+1;
+  }})
+  
+  if(!checkResult){
+    var LastColumn = dataTable.getLastColumn();
+    // 寫進作業項目標籤
+    dataTable.getRange(1, LastColumn+1).setValue(task);
+    checkColumeIndex = LastColumn+1;
+  }
+  
+  // 取得學生列數
+  var checkRowIndex = 49;
+  var userData = dataGroup.forEach(function(item,index){
+    if(item[0] == id){
+      checkRowIndex = index+1;
+    }
+  });
+  
+  // 寫進訊息
+  dataTable.getRange(checkRowIndex, checkColumeIndex).setValue(message);
+  
 }
 
 
@@ -204,16 +243,17 @@ function uploadFiles(form) {
     
     var blob1 = form.myFile;
     var file1 = folders.createFile(blob1);    
-    file1.setDescription("上傳者：" + id);
+    file1.setDescription( "上傳者：" + id + "，上傳時間：" + nowTime.toLocaleString());
     
-    writeLog(nowTime.toLocaleString(),id,"繳交"+task+"，"+timeResult.message, (authResult.status?"":"失敗")); 
+    writeLog(nowTime.toLocaleString(),id,"繳交"+task+"，"+timeResult.message, (authResult.status?"":"失敗"));
+    writeComplete(id,task,timeResult.message);
     // Logger.log(id + "，繳交" + task + "，" + timeResult.message + "，上傳成功！");
     return id + "，繳交" + task + "，" + timeResult.message + "，上傳成功！";
 
   } catch (error) {
     writeLog("","",error.toString(),"失敗"); 
     // Logger.log(error.toString());
-    return error.toString();
+    return "錯誤訊息："+error.toString();
   }
   
 }
