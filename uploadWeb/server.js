@@ -2,6 +2,24 @@ function doGet(e) {
   return HtmlService.createHtmlOutputFromFile('form.html');
 }
 
+/* 測試用 */
+function testFunction () {
+  
+  var result = "目標";
+  
+  // 時辰表檔案
+  var dateUrl = "https://docs.google.com/spreadsheets/d/17wpR2RpYm6iV8CfLERsxSu1peUgsFORHmLXovUL8W6o/edit#gid=0";
+  var dateSheet = SpreadsheetApp.openByUrl(dateUrl);
+  var dateTable = dateSheet.getSheetByName("工作表1");
+  
+  var maxRow = dateTable.getLastRow();
+  var maxColume = dateTable.getLastColumn();
+  
+  Logger.log(maxRow);
+  Logger.log(maxColume);
+  
+}
+
 /* 時辰表列表 */
 function getItemList(){
 
@@ -12,7 +30,11 @@ function getItemList(){
     var dateUrl = "https://docs.google.com/spreadsheets/d/1YbvSgFX2Nei88p3_r4FBmTW-yBcYlql4CCaiYD75s_E/edit#gid=0";
     var dateSheet = SpreadsheetApp.openByUrl(dateUrl);
     var dateTable = dateSheet.getSheetByName("工作表1");
-    var dateGroup = dateTable.getRange(1, 1, 50, 4).getValues().filter(function(x){
+    
+    var maxRow = dateTable.getLastRow();
+    var maxColume = dateTable.getLastColumn();
+    
+    var dateGroup = dateTable.getRange(1, 1, maxRow, maxColume).getValues().filter(function(x){
       return x[3] == "v";
     });
     
@@ -69,7 +91,10 @@ function writeComplete(id,task,message){
   var sheet = SpreadsheetApp.openByUrl(url);
   var dataTable = sheet.getSheetByName("工作表1");
   
-  var dataGroup = dataTable.getRange(1, 1, 28, 50).getValues();
+  var maxRow = dataTable.getLastRow();
+  var maxColume = dataTable.getLastColumn();
+  
+  var dataGroup = dataTable.getRange(1, 1, maxRow, maxColume).getValues();
   
   // 判斷是否有該作業項目標籤
   var checkResult = false;
@@ -88,12 +113,19 @@ function writeComplete(id,task,message){
   }
   
   // 取得學生列數
-  var checkRowIndex = 49;
+  var checkRowIndex = -1;
   var userData = dataGroup.forEach(function(item,index){
     if(item[0] == id){
       checkRowIndex = index+1;
     }
   });
+  
+  // 寫進缺少的學號
+  if(checkRowIndex == -1){
+    var LastRow = dataTable.getLastRow();
+    dataTable.getRange(LastRow+1, 1).setValue(id);
+    checkRowIndex = LastRow+1;
+  }
   
   // 寫進訊息
   dataTable.getRange(checkRowIndex, checkColumeIndex).setValue(message);
@@ -109,7 +141,10 @@ function auth(id,pw){
   var pwSheet = SpreadsheetApp.openByUrl(pwUrl);
   var pwTable = pwSheet.getSheetByName("工作表1");
 
-  var pwGroup = pwTable.getRange(1, 1, 29, 2).getValues().filter(function(x){
+  var maxRow = pwTable.getLastRow();
+  var maxColume = pwTable.getLastColumn();
+  
+  var pwGroup = pwTable.getRange(1, 1, maxRow, maxColume).getValues().filter(function(x){
    return x[0] == id;
   });
 
@@ -139,7 +174,10 @@ function timeCheck(task){
   var dateSheet = SpreadsheetApp.openByUrl(dateUrl);
   var dateTable = dateSheet.getSheetByName("工作表1");
   
-  var dateGroup = dateTable.getRange(1, 1, 18, 4).getValues().filter(function(x){
+  var maxRow = dateTable.getLastRow();
+  var maxColume = dateTable.getLastColumn();
+  
+  var dateGroup = dateTable.getRange(1, 1, maxRow, maxColume).getValues().filter(function(x){
    return x[0] == task;
   });
   
